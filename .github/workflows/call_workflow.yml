@@ -1,0 +1,28 @@
+name: Target3 call_Workflow
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  deploy_and_docker:
+    name: Amazon ECR and Docker.io
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Include Deployment Steps
+        uses: Jchinmay654/Master/.github/workflows/deploy.yml@main
+
+      - name: Include Docker Steps
+        uses: Jchinmay654/Target/.github/workflows/call_docker.yml@main
+        
+      - name: Run Docker Container with ECR image
+        run: |
+          docker run -d -p 8080:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Run Docker Container with Docker Hub image
+        run: |
+          docker run -d -p 8081:80 $DOCKER_REPOSITORY:$IMAGE_TAG
